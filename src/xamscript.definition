@@ -1,0 +1,32 @@
+; TOKEN DEFINITION SECTION -------------------------------------------
+
+EOX : token
+    /  ";"
+
+COMMA : token
+    /  ","
+
+bool : tokens
+    /  TRUE
+    /  FALSE
+
+constraints_syntax : token
+    /  "CONSTRAINT"
+    
+require_syntax : token
+    /  "REQUIRE"
+
+; TOKEN SYNTAXES SECTION --------------------------------------------------
+
+bool_operation : syntax
+    /  [variable_call, token] > boolean_operators > [variable_call, token]
+
+constraints : syntax
+    /  constraint_syntax > bool_operation > [constraints, end_of_expression]
+    /f constraints: COMMA > constraints
+    /f end_of_expression : EOX
+
+require : syntax
+    /  require_syntax > variable_call > data_types > [constraints, end_of_expression]
+    /f constraints : constraints
+    /f end_of_expression : EOX

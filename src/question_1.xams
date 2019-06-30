@@ -1,0 +1,19 @@
+REQUIRE <name> STRING;
+REQUIRE <nim> STRING CONSTRAINT LENGTH < 16 AND LENGTH > 0;
+REQUIRE <nohp> STRING CONSTRAINT LENGTH > 11 AND LENGTH < 14;
+REQUIRE <umur> INTEGER CONSTRAINT VALUE > 14;
+
+QUESTION 1 "is earth actually round?";
+ANSWER BOOLEANS;
+
+QUESTION 2 "is this <class> necessary?";
+ANSWER BOOLEANS ("Absolutely Yes", "Nope, not at all");
+
+QUESTION 3 "what causing one's become stupid?";
+ANSWER MULTIPLE_CHOICES (
+    "alcohol",
+    "weed",
+    "studying",
+    "xanax",
+    "learning"
+);

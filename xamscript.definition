@@ -1,0 +1,29 @@
+; TOKEN DEFINITION SECTION -------------------------------------------
+
+bools :             tokens
+    /   TRUE
+    /   FALSE
+
+bool_operator :     tokens
+    /   [>, <, ==, !=, >=, <=]
+
+; TOKEN SYNTAXES SECTION --------------------------------------------------
+
+comparation :       syntax
+    /   [identifier, token] > bool_operators > [identifier, token]
+
+bool_operation :    syntax
+    /   [bools, comparation]
+    /f  bools : bools
+    /f  comparation : comparation
+
+constraints :       syntax
+    /   "CONSTRAINT" > bool_operation > (constraints)
+    /f  constraints: "," > constraints
+
+require :           syntax
+    /   "REQUIRE" > variable_call > data_types > [constraints, ";"]
+    /f  constraints : constraints
+
+variable :          syntax
+    /   identifier > single_equal > token > ";"

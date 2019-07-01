@@ -1,29 +1,102 @@
+; how to read the definitions
+; consider this example
+;
+; string :            syntax
+;     /   """ > [token, tokens] > """
+;     /f  tokens : token > (tokens)
+;     /o  tokens : token > (tokens)
+;
+;   NOTE : read the above from left to right, end of
+;          the line then start again on the next line from left to right
+;
+;   - "string" : this is the name of the definitions
+;   - ":" : just simply call it "is"
+;   - "syntax" : type of definition, this can be :
+;                "syntax" - a definition of a certain syntax, how to write the correct program
+;                "expression" - a combination of syntaxes and/or token
+;                "token" - a single word, or a single character bounded by spaces left and right
+;                "tokens" - a collection of token
+;   - "/" : next to this character, is the definitions
+;   - """ : a " token (it's " surrounded by " left and right)
+;   - > : after that it expect ...
+;   - "[token, tokens]" : paths need to choose, essentialy a fork.
+;   - "/f" : a fork definition
+;   - "tokens" : a token fork definition
+;   - "(tokens)" : paths that can be choosen, optional fork
+;   - "/o" : an optional definition
+
 ; TOKEN DEFINITION SECTION -------------------------------------------
 
 bools :             tokens
-    /   TRUE
-    /   FALSE
+    /   "TRUE"
+    /   "FALSE"
+
+literal_value :     token
+    /   [bools, string, number]
+
+identifier :        token
+    /   token
 
 bool_operator :     tokens
-    /   [>, <, ==, !=, >=, <=]
+    /   [">", "<", "==", "!=", ">=", "<="]
 
-; TOKEN SYNTAXES SECTION --------------------------------------------------
+data_types :        tokens
+    /f  "BOOLEANS"
+    /f  "INTEGER"
+    /f  "STRING"
+    /f  "LIST"
+
+answer_types :      tokens
+    /f  "BOOL_CHOICE"
+    /f  "MULTIPLE_CHOICES
+
+; SYNTAXES DEFINITION SECTION --------------------------------------------------
+
+number :            syntax
+    /   [positive_number, negative_number]
+    /f  positive_number : token
+    /f  negative_number : "-" > token
+
+string :            syntax
+    /   """ > [token, tokens] > """
+    /f  tokens : token > (tokens)
+    /o  tokens : token > (tokens)
+
+list :              syntax
+    / "[" > literal_value > (",") > "]"
+    /o "," : "," > literal_value > (",")
 
 comparation :       syntax
     /   [identifier, token] > bool_operators > [identifier, token]
 
 bool_operation :    syntax
     /   [bools, comparation]
-    /f  bools : bools
-    /f  comparation : comparation
 
 constraints :       syntax
     /   "CONSTRAINT" > bool_operation > (constraints)
-    /f  constraints: "," > constraints
+    /o  constraints: "," > constraints
 
-require :           syntax
-    /   "REQUIRE" > variable_call > data_types > [constraints, ";"]
-    /f  constraints : constraints
+answer_definition : syntax
+    / [identifier, list]
 
-variable :          syntax
-    /   identifier > single_equal > token > ";"
+; EXPRESSION DEFINITION SECTION ----------------------------------------------
+
+assignment :        expression
+    /   "ASSIGN" > (form_identifier, identifier) > ["=", data_types] > ";"
+    /f  "=" : "=" > [identifier, literal_value]
+
+require :           expression
+    /   "REQUIRE" > identifier > (data_types, ``constraints) > ";"
+    /o  data_types : data_types > (constraints)
+    /o  constraints : constraints
+
+question :          expression
+    /   "QUESTION" > [identifier, number] > [identifier, string] > ";"
+
+answer :            expression
+    /   "ANSWER" > [identifier, number] > answer_type > (answer_definition) > (constraints) > ";"
+
+if :                expression
+    /   "IF" > bool_operation > "THEN" > [expression, expressions] > ["END", else]
+    /f  expressions : expression > (expression, expressions)
+    /f  else : "ELSE" > (expression, expressions)

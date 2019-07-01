@@ -1,0 +1,44 @@
+ASSIGN #name = "Mainstream Logic Test";
+ASSIGN #issue_date = "22/01/2019";
+
+ASSIGN name STRING;
+ASSIGN nim STRING;
+
+REQUIRE name;
+REQUIRE nim CONSTRAINT nim.length < 16 AND nim.length > 0;
+REQUIRE nohp STRING CONSTRAINT nohp.length > 11,
+                    CONSTRAINT nim.length < 14;
+REQUIRE umur INTEGER CONSTRAINT umur > 14;
+
+QUESTION 1 "is earth actually round?";
+QUESTION 2 "is this <class> necessary?";
+
+ANSWER 1 BOOL_CHOICE; // using default values ["true", "false"]
+ANSWER 2 BOOL_CHOICE ["Absolutely Yes", "Nope, not at all"];
+
+
+IF (name == "wowotek") THEN
+    QUESTION 3 "what causing one's become not stupid?";
+    ANSWER 3 MULTIPLE_CHOICES [
+        "alcohol",
+        "weed",
+        "studying",
+        "xanax",
+    ];
+ELSE IF (name == "gaby") THEN
+    QUESTION 3 "what causing one's become stupid?";
+    ANSWER 3 MULTIPLE_CHOICES [
+        "alcohol",
+        "experimenting",
+        "studying",
+        "learning",
+    ];
+ELSE
+    QUESTION 3 "what causing one's become stupid?";
+    ANSWER 3 MULTIPLE_CHOICES [
+        "alcohol",
+        "experimenting",
+        "studying",
+        "learning",
+    ];
+END
